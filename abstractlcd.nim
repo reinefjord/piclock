@@ -44,13 +44,14 @@ func diff(frame, newFrame: LcdFrame): FrameDiff =
 proc send(cs: ChipState, cd: ChipDiff) =
   for pageIdx in 0..7:
     for colIdx in 0..63:
-      if cd[pageIdx][colIdx] == nil:
+      let dataRef = cd[pageIdx][colIdx]
+      if dataRef == nil:
         continue
       if cs.page != pageIdx:
         lcdSetPage(pageIdx)
       if cs.address != colIdx:
         lcdSetAddress(colIdx)
-      lcdWriteData(cd[pageIdx][colIdx][])
+      lcdWriteData(dataRef[])
       if cs.address == 63:
         if cs.page == 7:
           cs.page = 0
