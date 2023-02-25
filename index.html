@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<canvas id="lcd"></canvas>
+<script>
+  const canvas = document.getElementById("lcd");
+  const ctx = canvas.getContext("2d");
+  const img = ctx.createImageData(128, 64);
+  const scale = 3;
+
+  canvas.width = 128 * scale;
+  canvas.height = 64 * scale;
+  ctx.imageSmoothingEnabled = false;
+  ctx.scale(scale, scale);
+
+  function draw(data) {
+    for (let i = 0; i < data.length; i++) {
+      if (data[i] == "1") {
+        img.data[i*4 + 0] = 255;
+        img.data[i*4 + 1] = 255;
+        img.data[i*4 + 2] = 255;
+        img.data[i*4 + 3] = 255;
+      } else {
+        img.data[i*4 + 0] = 0;
+        img.data[i*4 + 1] = 100;
+        img.data[i*4 + 2] = 200;
+        img.data[i*4 + 3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    ctx.drawImage(canvas, 0, 0);
+  }
+
+  var ws = new WebSocket("ws://localhost:8080/ws");
+  ws.onmessage = function(event) {
+    draw(event.data);
+  }
+  ws.onerror = function(event) {
+    console.log("WebSocket error!");
+  }
+</script>
